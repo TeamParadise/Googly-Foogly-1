@@ -33,23 +33,23 @@ public class DriveSubsystem extends SubsystemBase {
     leftMotorFollow.set(ControlMode.Follower, MotorConstants.kLeftMotorMain);
     rightMotorFollow.set(ControlMode.Follower, MotorConstants.kRightMotorMain);
 
-    leftMotorMain.setInverted(false);
-    leftMotorFollow.setInverted(false);
-    rightMotorMain.setInverted(true);
-    rightMotorFollow.setInverted(true);
+    leftMotorMain.setInverted(true);
+    leftMotorFollow.setInverted(true);
+    rightMotorMain.setInverted(false);
+    rightMotorFollow.setInverted(false);
      
-    leftMotorMain.configClosedloopRamp(0.5);
-    leftMotorFollow.configClosedloopRamp(0.5);
-    rightMotorMain.configClosedloopRamp(0.5);
-    rightMotorFollow.configClosedloopRamp(0.5);
+    leftMotorMain.configClosedloopRamp(0.25);
+    leftMotorFollow.configClosedloopRamp(0.25);
+    rightMotorMain.configClosedloopRamp(0.25);
+    rightMotorFollow.configClosedloopRamp(0.25);
 
     System.out.println("Motors Configured!"); 
   }
 
 
   public void DriveArcade(double moveSpeed, double rotateSpeed) {
-    double leftOutput = moveSpeed + rotateSpeed;
-    double rightOutput = moveSpeed - rotateSpeed;
+    double leftOutput = moveSpeed*(0.8) + rotateSpeed*(0.7);
+    double rightOutput = moveSpeed*(0.8) - rotateSpeed*(0.7);
     leftMotorMain.set(ControlMode.PercentOutput, leftOutput);
     rightMotorMain.set(ControlMode.PercentOutput, rightOutput);
   }

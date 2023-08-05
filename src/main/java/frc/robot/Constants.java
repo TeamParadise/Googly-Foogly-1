@@ -15,29 +15,30 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kCoDriverControllerPort = 1;
   }
 
   public static class MotorConstants {
-    public static final int kLeftMotorMain = 0;
-    public static final int kLeftMotorFollow = 1;
-    public static final int kRightMotorMain = 2;
-    public static final int kRightMotorFollow = 3;
+    public static final int kLeftMotorMain = 1;
+    public static final int kLeftMotorFollow = 2;
+    public static final int kRightMotorMain = 3;
+    public static final int kRightMotorFollow = 4;
 
     //Arm
-    public static final int kArmMotor = 4;
+    public static final int kArmMotor = 21;
 
     //Intake
-    public static final int kIntakeMotor = 5;
+    public static final int kIntakeMotor = 32;
   }
 
   public static class ArmConstants {
     public static final double kSVolts = 0;
     public static final double kVVoltSecondsPerRotation = 0;
 
-    public static final double kBottom = 0;
-    public static final double kLowArm = 0;
-    public static final double kMidArm = 10;
-    public static final double kHighArm = 20;
+    public static final double kBottom = 5;
+    public static final double kLowArm = 25;
+    public static final double kMidArm = 70;
+    public static final double kHighArm = 100 ;
   }
 
 

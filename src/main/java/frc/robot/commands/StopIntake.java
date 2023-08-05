@@ -7,11 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class DriveArcade extends CommandBase {
-  /** Creates a new DriveArcade. */
-  public DriveArcade() {
+public class StopIntake extends CommandBase {
+  /** Creates a new StopIntake. */
+  public StopIntake() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_driveSubsystem);
+    addRequirements(RobotContainer.m_IntakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -21,9 +21,7 @@ public class DriveArcade extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double moveSpeed = RobotContainer.m_driverController.getLeftY();
-    double rotateSpeed = RobotContainer.m_driverController.getRightX()*-1;
-    RobotContainer.m_driveSubsystem.DriveArcade(moveSpeed, rotateSpeed);
+    RobotContainer.m_IntakeSubsystem.StopIntake();
   }
 
   // Called once the command ends or is interrupted.

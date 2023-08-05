@@ -7,11 +7,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class DriveArcade extends CommandBase {
-  /** Creates a new DriveArcade. */
-  public DriveArcade() {
+public class SetArmSpeed extends CommandBase {
+  /** Creates a new SetArmSpeed. */
+  public SetArmSpeed() {
+    
+    addRequirements(RobotContainer.m_EncoderPID);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_driveSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -21,9 +22,13 @@ public class DriveArcade extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double moveSpeed = RobotContainer.m_driverController.getLeftY();
-    double rotateSpeed = RobotContainer.m_driverController.getRightX()*-1;
-    RobotContainer.m_driveSubsystem.DriveArcade(moveSpeed, rotateSpeed);
+    if(RobotContainer.m_driverController.getRightTriggerAxis() > 0.6) {
+      RobotContainer.m_EncoderPID.armUp();
+    } else if (RobotContainer.m_driverController.getLeftTriggerAxis() > 0.6) {
+      RobotContainer.m_EncoderPID.armDown();
+    } else {
+      RobotContainer.m_EncoderPID.stopArm();
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -51,7 +51,10 @@ public class Robot extends TimedRobot {
   public void disabledInit() {}
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    RobotContainer.m_EncoderPID.setCoastMode();
+    System.out.println(RobotContainer.m_EncoderPID.getEncoder());
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -60,7 +63,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+     m_autonomousCommand.schedule();
     }
   }
 
@@ -75,13 +78,18 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+     m_autonomousCommand.cancel();
     }
+    
+    RobotContainer.m_EncoderPID.setBrakeMode();
+    RobotContainer.m_IntakeSubsystem.setBrakeMode();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    // System.out.println("Motor Output: " + RobotContainer.m_EncoderPID.getMeasurement());
+  }
 
   @Override
   public void testInit() {

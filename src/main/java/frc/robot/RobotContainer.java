@@ -8,11 +8,24 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.DriveArcade;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Intake;
+import frc.robot.commands.MoveArmHigh;
+import frc.robot.commands.MoveArmLow;
+import frc.robot.commands.MoveArmMid;
+import frc.robot.commands.Outake;
+import frc.robot.commands.RestArm;
+import frc.robot.commands.SetArmSpeed;
+import frc.robot.commands.ShootHighTaxi;
+import frc.robot.commands.StopIntake;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.EncoderPID;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -26,16 +39,20 @@ public class RobotContainer {
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   public final static DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   public final static EncoderPID m_EncoderPID = new EncoderPID();
+  public final static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  public final static CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  public final static XboxController m_driverController =
+      new XboxController(OperatorConstants.kDriverControllerPort);
+  public final static XboxController m_coDriverController =
+      new XboxController(OperatorConstants.kCoDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
     m_driveSubsystem.setDefaultCommand(new DriveArcade());
+    m_EncoderPID.setDefaultCommand(new SetArmSpeed());
   }
 
   /**
@@ -48,13 +65,17 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    new JoystickButton(m_driverController, 4).onTrue(new MoveArmHigh());
+    new JoystickButton(m_driverController, 2).onTrue(new MoveArmMid());
+    new JoystickButton(m_driverController, 3).onTrue(new MoveArmLow());
+    new JoystickButton(m_driverController, 1).onTrue(new RestArm());
+    new JoystickButton(m_coDriverController, 1).onTrue(new Intake());
+    new JoystickButton(m_coDriverController, 3).onTrue(new Outake());
+    new JoystickButton(m_coDriverController, 2).onTrue(new StopIntake());
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    // new Trigger (m_coDriverController ).onTrue(new StopIntake());
+
+
   }
 
   /**
@@ -64,6 +85,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    return new ShootHighTaxi();
   }
 }
