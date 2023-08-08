@@ -22,12 +22,15 @@ public class SetArmSpeed extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(RobotContainer.m_driverController.getRightTriggerAxis() > 0.6) {
-      RobotContainer.m_EncoderPID.armUp();
-    } else if (RobotContainer.m_driverController.getLeftTriggerAxis() > 0.6) {
-      RobotContainer.m_EncoderPID.armDown();
+    if(RobotContainer.m_driverController.getRightTriggerAxis() > 0.1) {
+      RobotContainer.m_EncoderPID.setCoastMode();
+      RobotContainer.m_EncoderPID.moveArm(0.7 * RobotContainer.m_driverController.getRightTriggerAxis());
+    } else if (RobotContainer.m_driverController.getLeftTriggerAxis() > 0.1) {
+      RobotContainer.m_EncoderPID.setCoastMode();
+      RobotContainer.m_EncoderPID.moveArm(-0.7 * RobotContainer.m_driverController.getLeftTriggerAxis());
     } else {
-      RobotContainer.m_EncoderPID.stopArm();
+      RobotContainer.m_EncoderPID.setBrakeMode();
+      RobotContainer.m_EncoderPID.moveArm(0);
     }
   }
 

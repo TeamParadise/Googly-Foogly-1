@@ -4,9 +4,15 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.cameraserver.CameraServer; 
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -19,6 +25,11 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<Boolean> m_balance = new SendableChooser<>();
+  private final SendableChooser<Boolean> m_taxi = new SendableChooser<>();
+
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,7 +39,24 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    CameraServer.startAutomaticCapture("USB Camera 0", 0);
+
+    m_chooser.setDefaultOption("Score High", "kHigh");
+    m_chooser.addOption("Score Mid", "kMid");
+    m_chooser.addOption("No Score", "kNone");
+
+    m_taxi.addOption("Yes", true);
+    m_taxi.setDefaultOption("No", false);
+
+    m_balance.addOption("Yes", true);
+    m_balance.setDefaultOption("No", false);
+  
+    SmartDashboard.putData("Scoring Level", m_chooser);
+    SmartDashboard.putData("Taxi", m_taxi);
+    SmartDashboard.putData("Balance", m_balance);
   }
+
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
@@ -53,13 +81,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     RobotContainer.m_EncoderPID.setCoastMode();
-    System.out.println(RobotContainer.m_EncoderPID.getEncoder());
+    // System.out.println(RobotContainer.m_EncoderPID.getEncoder());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_chooser.getSelected(), m_balance.getSelected(), m_taxi.getSelected());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

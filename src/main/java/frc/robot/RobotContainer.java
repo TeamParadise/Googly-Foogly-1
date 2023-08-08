@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.Balance;
 import frc.robot.commands.DriveArcade;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Intake;
@@ -15,15 +16,21 @@ import frc.robot.commands.MoveArmMid;
 import frc.robot.commands.Outake;
 import frc.robot.commands.RestArm;
 import frc.robot.commands.SetArmSpeed;
-import frc.robot.commands.ShootHighTaxi;
+import frc.robot.commands.ScoreHigh;
+import frc.robot.commands.ScoreMid;
 import frc.robot.commands.StopIntake;
+import frc.robot.commands.Taxi;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.EncoderPID;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+
+import javax.print.attribute.standard.RequestingUserName;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -83,8 +90,24 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getAutonomousCommand(String auto, boolean balance, boolean taxi) {
     // An example command will be run in autonomous
-    return new ShootHighTaxi();
+    
+    if (auto.equals("kHigh")) {
+      if (balance) return new ScoreHigh().withTimeout(6).andThen(new Balance());
+      else if (taxi) return new ScoreHigh().withTimeout(7).andThen(new Taxi());
+      return new ScoreHigh();
+    }
+    else if (auto.equals("kMid")) {
+      if (balance) return new ScoreMid().withTimeout(6).andThen(new Balance());
+      else if (taxi) return new ScoreMid().withTimeout(7).andThen(new Taxi());
+      return new ScoreMid();
+    }
+    else if (auto.equals("kNone")) {
+      if (taxi) return new Taxi();
+      if (balance) return new Balance();
+    }
+
+    return null;
   }
 }

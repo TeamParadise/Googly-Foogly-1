@@ -4,41 +4,40 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
-public class DriveTank extends CommandBase {
-  
-  private double leftSpeed;
-  private double rightSpeed;
+public class DriveLevel extends CommandBase {
+  /** Creates a new DriveLevel. */
 
-  /** Creates a new DriveTank. */
-  public DriveTank(double left, double right) {
+  public PIDController tiltController;
+
+  public DriveLevel() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_driveSubsystem);
-    leftSpeed = left;
-    rightSpeed = right;
+    tiltController = new PIDController(0.005, 0, 0);
+    tiltController.setSetpoint(0);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("Driving Tank");
+    tiltController.reset();
+    System.out.println("Running Auto Balance!");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // double left = RobotContainer.m_driverController.getLeftX()*-1;
-    // double right = RobotContainer.m_driverController.getRightX();
-    RobotContainer.m_driveSubsystem.DriveTank(leftSpeed, rightSpeed);
+    double left_command = tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt());
+    double right_command = tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt());
+    RobotContainer.m_driveSubsystem.DriveTank(left_command*-1, right_command*-1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("End Driving Tank");
-    RobotContainer.m_driveSubsystem.stopDrive();
+    System.out.println("Stopping Auto Balance!");
   }
 
   // Returns true when the command should end.

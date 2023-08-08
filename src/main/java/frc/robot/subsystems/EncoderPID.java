@@ -44,6 +44,7 @@ public class EncoderPID extends PIDSubsystem {
     encoder = armMotor.getEncoder();
     this.getController().setTolerance(5.0);
     this.getController().setIntegratorRange(-5, 5);
+    armMotor.setOpenLoopRampRate(0.35);
   }
 
   // public void setSetpoint(double setpoint) {
@@ -54,16 +55,9 @@ public class EncoderPID extends PIDSubsystem {
     this.resetPID();
   }
 
-  public void armUp() {
-    armMotor.set(0.3);
-  }
 
-  public void armDown() {
-    armMotor.set(-0.3);
-  }
-
-  public void stopArm() {
-    armMotor.set(0);
+  public void moveArm(double speed) {
+    armMotor.set(speed);
   }
   
   @Override
@@ -71,7 +65,6 @@ public class EncoderPID extends PIDSubsystem {
     // Use the output here
     armMotor.set(output);
   }
-  
   
 
   public void setCoastMode(){

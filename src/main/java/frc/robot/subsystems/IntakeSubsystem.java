@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void Intake() {
     intakeMotor.setIdleMode(IdleMode.kCoast);
-    intakeMotor.set(0.6);
+    intakeMotor.set(0.5);
   }
 
   public void setCoastMode(){
@@ -42,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void StopIntake() {
     intakeMotor.setIdleMode(IdleMode.kBrake);
-    intakeMotor.set(0.15);
+    intakeMotor.set(0.13);
   }
 
   @Override
