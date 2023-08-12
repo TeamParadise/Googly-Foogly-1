@@ -2,8 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.drivetrain;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
@@ -15,8 +16,9 @@ public class DriveLevel extends CommandBase {
 
   public DriveLevel() {
     // Use addRequirements() here to declare subsystem dependencies.
-    tiltController = new PIDController(0.005, 0, 0);
-    tiltController.setSetpoint(0);
+    tiltController = new PIDController(0.019, 0, 0);
+    tiltController.setSetpoint(44.5);
+    tiltController.setTolerance(3);
   }
 
   // Called when the command is initially scheduled.
@@ -29,20 +31,21 @@ public class DriveLevel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left_command = tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt());
-    double right_command = tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt());
-    RobotContainer.m_driveSubsystem.DriveTank(left_command*-1, right_command*-1);
+    double left_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.5, 0.5);
+    double right_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.5, 0.5);
+    RobotContainer.m_driveSubsystem.DriveTankPID(left_command, right_command, tiltController, RobotContainer.m_driveSubsystem.getGyroTilt());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     System.out.println("Stopping Auto Balance!");
+    RobotContainer.m_driveSubsystem.stopDrive();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return tiltController.atSetpoint();
   }
 }

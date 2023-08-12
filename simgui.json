@@ -1,7 +1,29 @@
 {
+  "HALProvider": {
+    "Other Devices": {
+      "Talon SRX[1]": {
+        "header": {
+          "open": true
+        }
+      },
+      "navX-Sensor[0]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Balance": "String Chooser",
+      "/SmartDashboard/Game Piece": "String Chooser",
+      "/SmartDashboard/PIDController[2]": "PIDController",
+      "/SmartDashboard/Scoring Level": "String Chooser",
+      "/SmartDashboard/Taxi": "String Chooser"
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

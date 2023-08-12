@@ -4,20 +4,22 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import frc.robot.Constants.MotorConstants;
 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.MotorConstants;
-
 import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 
 
@@ -28,14 +30,28 @@ public class DriveSubsystem extends SubsystemBase {
   WPI_TalonSRX leftMotorFollow = new WPI_TalonSRX(MotorConstants.kLeftMotorFollow);
   WPI_TalonSRX rightMotorMain = new WPI_TalonSRX(MotorConstants.kRightMotorMain);
   WPI_TalonSRX rightMotorFollow = new WPI_TalonSRX(MotorConstants.kRightMotorFollow);
-  
+    
   //Initialize Gyro 
   AHRS ahrs = new AHRS(SPI.Port.kMXP);
+ 
+  ShuffleboardTab pidtab = Shuffleboard.getTab("PID Tab");
+
+  GenericEntry setpointWidget, errorWidget, positionWidget, leftDriveWidget, rightDriveWidget;
+ ;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     configMotors();
-    calibrateGyro();
+    resetGyro();
+    configSmartDashboard();
+  }
+
+  public void configSmartDashboard() {
+    setpointWidget = pidtab.add("Setpoint", 0.0).getEntry();
+    errorWidget = pidtab.add("Error", 0.0).getEntry();
+    positionWidget = pidtab.add("Position", 0.0).getEntry();
+    leftDriveWidget = pidtab.add("Left Output", 0.0).getEntry();
+    rightDriveWidget = pidtab.add("Right Output", 0.0).getEntry();
   }
 
   private void configMotors() {
@@ -52,25 +68,37 @@ public class DriveSubsystem extends SubsystemBase {
     rightMotorMain.configClosedloopRamp(0.25);
     rightMotorFollow.configClosedloopRamp(0.25);
 
+    leftMotorMain.configVoltageCompSaturation(12);
+    leftMotorFollow.configVoltageCompSaturation(12);
+    rightMotorFollow.configVoltageCompSaturation(12);
+    rightMotorMain.configVoltageCompSaturation(12);
+
+    
+
     System.out.println("Motors Configured!"); 
   }
-
 
   public void DriveArcade(double moveSpeed, double rotateSpeed) {
     double leftOutput = moveSpeed*(0.8) + rotateSpeed*(0.7);
     double rightOutput = moveSpeed*(0.8) - rotateSpeed*(0.7);
     leftMotorMain.set(ControlMode.PercentOutput, leftOutput);
     rightMotorMain.set(ControlMode.PercentOutput, rightOutput);
-
-    SmartDashboard.putNumber("Left Speed", leftOutput);
-    SmartDashboard.putNumber("Right Speed", rightOutput);
   }
 
   public void DriveTank(double left, double right) {
     leftMotorMain.set(ControlMode.PercentOutput, left);
     rightMotorMain.set(ControlMode.PercentOutput, right);
-    SmartDashboard.putNumber("Left Speed", right);
-    SmartDashboard.putNumber("Right Speed", left);
+  }
+
+  public void DriveTankPID(double left, double right, PIDController pid, double position) {
+    leftMotorMain.set(ControlMode.PercentOutput, left);
+    rightMotorMain.set(ControlMode.PercentOutput, right);
+ 
+    setpointWidget.setDouble(pid.getSetpoint());
+    errorWidget.setDouble(pid.getPositionError());
+    positionWidget.setDouble(position);
+    leftDriveWidget.setDouble(left);
+    rightDriveWidget.setDouble(right);
   }
 
   public void stopDrive() {
@@ -78,33 +106,49 @@ public class DriveSubsystem extends SubsystemBase {
     rightMotorMain.set(ControlMode.PercentOutput, 0);
   }
 
-  public void setCoastMode() {
-    leftMotorMain.setNeutralMode(NeutralMode.Coast);
-    rightMotorMain.setNeutralMode(NeutralMode.Coast);
+  // public CommandBase setCoastMode() {
+  //   return runOnce(() -> {
+  //     leftMotorMain.setNeutralMode(NeutralMode.Coast);
+  //     rightMotorMain.setNeutralMode(NeutralMode.Coast);
+  //   });
+  // }
+
+  public CommandBase setBrakeMode() {
+    return runOnce(() -> {
+      leftMotorMain.setNeutralMode(NeutralMode.Brake);
+      rightMotorMain.setNeutralMode(NeutralMode.Brake);
+      leftMotorFollow.setNeutralMode(NeutralMode.Brake);
+      rightMotorFollow.setNeutralMode(NeutralMode.Brake);
+    });
   }
 
-  public void setBrakeMode() {
-    leftMotorMain.setNeutralMode(NeutralMode.Brake);
-    rightMotorMain.setNeutralMode(NeutralMode.Brake);
-  }
-
+  //Move the following 3 to specific Gyro File
   public double getGyroAngle() {
     return ahrs.getAngle();
   }
 
   public double getGyroTilt() {
-    return ahrs.getPitch();
+    return ahrs.getRoll();
   }
 
-  public void calibrateGyro() {
-    ahrs.calibrate();
+  public CommandBase resetGyro() {
+    return runOnce(() -> { 
+      ahrs.reset();
+    });
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    //Maybe move these to specific "IO" File
     SmartDashboard.putNumber("Gyro Pitch", getGyroTilt());
     SmartDashboard.putNumber("Gyro Angle", getGyroAngle());
+    SmartDashboard.putNumber("Left Voltage", leftMotorMain.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Right Voltage", rightMotorMain.getMotorOutputVoltage());
+
+    setBrakeMode();
+
     SmartDashboard.updateValues();
   }
 }

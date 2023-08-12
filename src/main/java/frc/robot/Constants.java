@@ -29,6 +29,8 @@ public final class Constants {
 
     //Intake
     public static final int kIntakeMotor = 32;
+
+
   }
 
   public static class ArmConstants {
@@ -37,9 +39,17 @@ public final class Constants {
 
     public static final double kBottom = 5;
     public static final double kLowArm = 25;
-    public static final double kMidArm = 70;
+    public static final double kMidArm = 80;
     public static final double kHighArm = 100 ;
   }
 
+  public static class IntakeConstants {
+
+    public static final double kSpinIn = 0.5;
+    public static final double kSpinOut = -0.6;
+    public static final double kHold = 0.13;
+    public static final double kEject = -1;
+
+  }
 
 }

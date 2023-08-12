@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
@@ -55,7 +56,6 @@ public class EncoderPID extends PIDSubsystem {
     this.resetPID();
   }
 
-
   public void moveArm(double speed) {
     armMotor.set(speed);
   }
@@ -67,17 +67,19 @@ public class EncoderPID extends PIDSubsystem {
   }
   
 
-  public void setCoastMode(){
-    armMotor.setIdleMode(IdleMode.kCoast);
+  public CommandBase setCoastMode(){
+    return runOnce(() -> {
+      armMotor.setIdleMode(IdleMode.kCoast);
+    });
+
   }
 
-  public void setBrakeMode(){
-    armMotor.setIdleMode(IdleMode.kBrake);
+  public CommandBase setBrakeMode(){
+  return runOnce(() -> {
+      armMotor.setIdleMode(IdleMode.kBrake);
+    });
   }
-
-  public void setSpeed(double speed) {
-    armMotor.set(speed);
-  }
+  
 
   public double getEncoder() {
     return armMotor.getEncoder().getPosition();
