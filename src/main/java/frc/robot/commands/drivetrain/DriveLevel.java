@@ -16,9 +16,9 @@ public class DriveLevel extends CommandBase {
 
   public DriveLevel() {
     // Use addRequirements() here to declare subsystem dependencies.
-    tiltController = new PIDController(0.019, 0, 0);
-    tiltController.setSetpoint(44.5);
-    tiltController.setTolerance(3);
+    tiltController = new PIDController(0.020, 0, 0.0015);
+    tiltController.setSetpoint(45);
+    tiltController.setTolerance(4 );
   }
 
   // Called when the command is initially scheduled.
@@ -31,9 +31,8 @@ public class DriveLevel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.5, 0.5);
-    double right_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.5, 0.5);
-    RobotContainer.m_driveSubsystem.DriveTankPID(left_command, right_command, tiltController, RobotContainer.m_driveSubsystem.getGyroTilt());
+    double left_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.3, 0.3);
+    RobotContainer.m_driveSubsystem.DriveTankPID(left_command, left_command, tiltController, RobotContainer.m_driveSubsystem.getGyroTilt());
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +45,6 @@ public class DriveLevel extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return tiltController.atSetpoint();
+    return false;
   }
 }

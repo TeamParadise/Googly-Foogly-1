@@ -25,9 +25,8 @@ public class Balance extends SequentialCommandGroup {
 
       new DriveTank(-0.45, -0.45).withTimeout(1.75).raceWith(new RestArm()),
       RobotContainer.m_driveSubsystem.setBrakeMode(),
-      new DriveLevel(),
+      new DriveLevel()
       // RobotContainer.m_driveSubsystem.setBrakeMode(),
-      new DriveTank(0.11, 0.11).withTimeout(0.45)
     );
   }
 }

@@ -82,17 +82,17 @@ public class DriveSubsystem extends SubsystemBase {
     double leftOutput = moveSpeed*(0.8) + rotateSpeed*(0.7);
     double rightOutput = moveSpeed*(0.8) - rotateSpeed*(0.7);
     leftMotorMain.set(ControlMode.PercentOutput, leftOutput);
-    rightMotorMain.set(ControlMode.PercentOutput, rightOutput);
+    rightMotorMain.set(ControlMode.PercentOutput, rightOutput*.9);
   }
 
   public void DriveTank(double left, double right) {
     leftMotorMain.set(ControlMode.PercentOutput, left);
-    rightMotorMain.set(ControlMode.PercentOutput, right);
+    rightMotorMain.set(ControlMode.PercentOutput, right*.9);
   }
 
   public void DriveTankPID(double left, double right, PIDController pid, double position) {
     leftMotorMain.set(ControlMode.PercentOutput, left);
-    rightMotorMain.set(ControlMode.PercentOutput, right);
+    rightMotorMain.set(ControlMode.PercentOutput, right*.9);
  
     setpointWidget.setDouble(pid.getSetpoint());
     errorWidget.setDouble(pid.getPositionError());
