@@ -31,7 +31,7 @@ public class DriveLevel extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double left_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.3, 0.3);
+    double left_command = MathUtil.clamp(tiltController.calculate(RobotContainer.m_driveSubsystem.getGyroTilt()), -0.4, 0.4);
     RobotContainer.m_driveSubsystem.DriveTankPID(left_command, left_command, tiltController, RobotContainer.m_driveSubsystem.getGyroTilt());
   }
 
