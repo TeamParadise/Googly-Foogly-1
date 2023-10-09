@@ -19,8 +19,8 @@ public final class Constants {
   }
 
   public static class MotorConstants {
-    public static final int kLeftMotorMain = 1;
-    public static final int kLeftMotorFollow = 2;
+    public static final int kLeftMotorMain = 2;
+    public static final int kLeftMotorFollow = 1;
     public static final int kRightMotorMain = 3;
     public static final int kRightMotorFollow = 4;
 

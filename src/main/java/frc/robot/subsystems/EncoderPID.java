@@ -67,6 +67,7 @@ public class EncoderPID extends PIDSubsystem {
   }
   
 
+  
   public CommandBase setCoastMode(){
     return runOnce(() -> {
       armMotor.setIdleMode(IdleMode.kCoast);

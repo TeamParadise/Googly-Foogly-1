@@ -63,7 +63,7 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(new DriveArcade());
     m_EncoderPID.setDefaultCommand(new SetArmSpeed());
   }
-
+  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -83,8 +83,8 @@ public class RobotContainer {
     // new JoystickButton(m_coDriverController, 2).onTrue(new StopIntake());
 
     m_coDriverController.a().onTrue(new Intake());
-    m_coDriverController.b().onTrue(new Outake());
-    m_coDriverController.x().onTrue(new StopIntake());
+    m_coDriverController.x().onTrue(new Outake());
+    m_coDriverController.b().onTrue(new StopIntake());
     m_coDriverController.rightTrigger().onTrue(new SetColor(0.69));
     m_coDriverController.leftTrigger().onTrue(new SetColor(0.91));
     // new Trigger(m_driverController.a(null)).onTrue(new Intake());

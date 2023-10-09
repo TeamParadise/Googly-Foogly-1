@@ -24,10 +24,10 @@ public class SetArmSpeed extends CommandBase {
   public void execute() {
     if(RobotContainer.m_driverController.getRightTriggerAxis() > 0.1) {
       RobotContainer.m_EncoderPID.setCoastMode();
-      RobotContainer.m_EncoderPID.moveArm(0.7 * RobotContainer.m_driverController.getRightTriggerAxis());
+      RobotContainer.m_EncoderPID.moveArm(Math.sqrt(0.7 * RobotContainer.m_driverController.getRightTriggerAxis()));
     } else if (RobotContainer.m_driverController.getLeftTriggerAxis() > 0.1) {
       RobotContainer.m_EncoderPID.setCoastMode();
-      RobotContainer.m_EncoderPID.moveArm(-0.7 * RobotContainer.m_driverController.getLeftTriggerAxis());
+      RobotContainer.m_EncoderPID.moveArm(-Math.sqrt(0.7 * RobotContainer.m_driverController.getLeftTriggerAxis()));
     } else {
       RobotContainer.m_EncoderPID.setBrakeMode();
       RobotContainer.m_EncoderPID.moveArm(0);
