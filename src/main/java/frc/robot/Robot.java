@@ -4,13 +4,13 @@
 
 package frc.robot;
 
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.RobotContainer;
 
 
 /**
@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
     
     RobotContainer.m_driveSubsystem.setBrakeMode();
 
-    CameraServer.startAutomaticCapture("USB Camera 0", 0);
+    // CameraServer.startAutomaticCapture("USB Camera 0", 0);
 
     m_chooser.setDefaultOption("High", "kHigh");
     m_chooser.addOption("Mid", "kMid");
@@ -88,7 +88,6 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     RobotContainer.m_EncoderPID.setCoastMode();
-    RobotContainer.m_driveSubsystem.setBrakeMode();
     RobotContainer.m_IntakeSubsystem.setBrakeMode();
 
     // System.out.println(RobotContainer.m_EncoderPID.getEncoder());

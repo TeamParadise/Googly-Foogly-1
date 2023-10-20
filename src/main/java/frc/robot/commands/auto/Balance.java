@@ -20,11 +20,11 @@ public class Balance extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      RobotContainer.m_driveSubsystem.setBrakeMode(),
+      // RobotContainer.m_driveSubsystem.setBrakeMode(),
       RobotContainer.m_driveSubsystem.resetGyro(),
 
-      new DriveTank(-0.45, -0.45).withTimeout(1.75).raceWith(new RestArm()),
-      RobotContainer.m_driveSubsystem.setBrakeMode(),
+      new DriveTank(-0.45, -0.45).withTimeout(1.45).raceWith(new RestArm()),
+      // RobotContainer.m_driveSubsystem.setBrakeMode(),
       new DriveLevel()
       // RobotContainer.m_driveSubsystem.setBrakeMode(),
     );

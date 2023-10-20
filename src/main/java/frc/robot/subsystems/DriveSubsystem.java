@@ -8,13 +8,19 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+
+import frc.robot.RobotContainer;
 import frc.robot.Constants.MotorConstants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
@@ -26,10 +32,10 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class DriveSubsystem extends SubsystemBase {
   
   //Initialize motors
-  WPI_TalonSRX leftMotorMain = new WPI_TalonSRX(MotorConstants.kLeftMotorMain);
-  WPI_TalonSRX leftMotorFollow = new WPI_TalonSRX(MotorConstants.kLeftMotorFollow);
-  WPI_TalonSRX rightMotorMain = new WPI_TalonSRX(MotorConstants.kRightMotorMain);
-  WPI_TalonSRX rightMotorFollow = new WPI_TalonSRX(MotorConstants.kRightMotorFollow);
+  CANSparkMax leftMotorMain = new CANSparkMax(MotorConstants.kLeftMotorMain, MotorType.kBrushless);
+  CANSparkMax leftMotorFollow = new CANSparkMax(MotorConstants.kLeftMotorFollow, MotorType.kBrushless);
+  CANSparkMax rightMotorMain = new CANSparkMax(MotorConstants.kRightMotorMain, MotorType.kBrushless);
+  CANSparkMax rightMotorFollow = new CANSparkMax(MotorConstants.kRightMotorFollow, MotorType.kBrushless);
     
   //Initialize Gyro 
   AHRS ahrs = new AHRS(SPI.Port.kMXP);
@@ -44,6 +50,7 @@ public class DriveSubsystem extends SubsystemBase {
     configMotors();
     resetGyro();
     configSmartDashboard();
+    setBrakeMode();
   }
 
   public void configSmartDashboard() {
@@ -55,23 +62,24 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   private void configMotors() {
-    leftMotorFollow.set(ControlMode.Follower, MotorConstants.kLeftMotorMain);
-    rightMotorFollow.set(ControlMode.Follower, MotorConstants.kRightMotorMain);
+    leftMotorFollow.follow(leftMotorMain, false);
+    rightMotorFollow.follow(rightMotorMain, false);
 
     leftMotorMain.setInverted(true);
     leftMotorFollow.setInverted(true);
     rightMotorMain.setInverted(false);
     rightMotorFollow.setInverted(false);
      
-    leftMotorMain.configClosedloopRamp(0.25);
-    leftMotorFollow.configClosedloopRamp(0.25);
-    rightMotorMain.configClosedloopRamp(0.25);
-    rightMotorFollow.configClosedloopRamp(0.25);
+    leftMotorMain.setClosedLoopRampRate(0.1);
+    leftMotorFollow.setClosedLoopRampRate(0.1);
+    rightMotorMain.setClosedLoopRampRate(0.1);
+    rightMotorFollow.setClosedLoopRampRate(0.1);
 
-    leftMotorMain.configVoltageCompSaturation(12);
-    leftMotorFollow.configVoltageCompSaturation(12);
-    rightMotorFollow.configVoltageCompSaturation(12);
-    rightMotorMain.configVoltageCompSaturation(12);
+    // NEED A SPARK MAX EQUIVALENT
+    // leftMotorMain.configVoltageCompSaturation(12);
+    // leftMotorFollow.configVoltageCompSaturation(12);
+    // rightMotorFollow.configVoltageCompSaturation(12);
+    //rightMotorMain.configVoltageCompSaturation(12);
 
     
 
@@ -79,20 +87,20 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void DriveArcade(double moveSpeed, double rotateSpeed) {
-    double leftOutput = moveSpeed*(0.8) + rotateSpeed*(0.7);
-    double rightOutput = moveSpeed*(0.8) - rotateSpeed*(0.7);
-    leftMotorMain.set(ControlMode.PercentOutput, leftOutput);
-    rightMotorMain.set(ControlMode.PercentOutput, rightOutput*.9);
+    double leftOutput = moveSpeed*(0.85) + rotateSpeed*(0.7);
+    double rightOutput = moveSpeed*(0.85) - rotateSpeed*(0.7);
+    leftMotorMain.set(MathUtil.applyDeadband(leftOutput, 0.06));
+    rightMotorMain.set(MathUtil.applyDeadband(rightOutput, 0.06));
   }
 
   public void DriveTank(double left, double right) {
-    leftMotorMain.set(ControlMode.PercentOutput, left);
-    rightMotorMain.set(ControlMode.PercentOutput, right*.9);
+    leftMotorMain.set(left);
+    rightMotorMain.set(right*.9);
   }
 
   public void DriveTankPID(double left, double right, PIDController pid, double position) {
-    leftMotorMain.set(ControlMode.PercentOutput, left);
-    rightMotorMain.set(ControlMode.PercentOutput, right*.9);
+    leftMotorMain.set(left);
+    rightMotorMain.set(right*.9);
  
     setpointWidget.setDouble(pid.getSetpoint());
     errorWidget.setDouble(pid.getPositionError());
@@ -102,8 +110,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void stopDrive() {
-    leftMotorMain.set(ControlMode.PercentOutput, 0);
-    rightMotorMain.set(ControlMode.PercentOutput, 0);
+    leftMotorMain.set(0);
+    rightMotorMain.set(0);
   }
 
   // public CommandBase setCoastMode() {
@@ -113,15 +121,22 @@ public class DriveSubsystem extends SubsystemBase {
   //   });
   // }
 
-  public CommandBase setBrakeMode() {
-    return runOnce(() -> {
-      leftMotorMain.setNeutralMode(NeutralMode.Brake);
-      rightMotorMain.setNeutralMode(NeutralMode.Brake);
-      leftMotorFollow.setNeutralMode(NeutralMode.Brake);
-      rightMotorFollow.setNeutralMode(NeutralMode.Brake);
-    });
-  }
+  // public CommandBase setBrakeMode() {
+  //   return runOnce(() -> {
+  //     leftMotorMain.setIdleMode(IdleMode.kBrake);
+  //     rightMotorMain.setIdleMode(IdleMode.kBrake);
+  //     leftMotorFollow.setIdleMode(IdleMode.kBrake);
+  //     rightMotorFollow.setIdleMode(IdleMode.kBrake);
+  //   });
+  // }
 
+
+  public void setBrakeMode() {
+      leftMotorMain.setIdleMode(IdleMode.kBrake);
+      rightMotorMain.setIdleMode(IdleMode.kBrake);
+      leftMotorFollow.setIdleMode(IdleMode.kBrake);
+      rightMotorFollow.setIdleMode(IdleMode.kBrake);
+  }
   //Move the following 3 to specific Gyro File
   public double getGyroAngle() {
     return ahrs.getAngle();
@@ -144,8 +159,8 @@ public class DriveSubsystem extends SubsystemBase {
     //Maybe move these to specific "IO" File
     SmartDashboard.putNumber("Gyro Pitch", getGyroTilt());
     SmartDashboard.putNumber("Gyro Angle", getGyroAngle());
-    SmartDashboard.putNumber("Left Voltage", leftMotorMain.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Right Voltage", rightMotorMain.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Left Voltage", leftMotorMain.getBusVoltage());
+    SmartDashboard.putNumber("Right Voltage", rightMotorMain.getBusVoltage());
 
     setBrakeMode();
 

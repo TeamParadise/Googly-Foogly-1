@@ -18,10 +18,14 @@ import frc.robot.commands.drivetrain.DriveArcade;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outake;
 import frc.robot.commands.intake.StopIntake;
+import frc.robot.commands.led.SetColor;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.EncoderPID;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
+
+import java.nio.channels.SelectionKey;
 
 import javax.print.attribute.standard.RequestingUserName;
 
@@ -44,12 +48,13 @@ public class RobotContainer {
   public final static DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   public final static EncoderPID m_EncoderPID = new EncoderPID();
   public final static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+  public final static LEDSubsystem m_ledsubsystem = new LEDSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public final static XboxController m_driverController =
       new XboxController(OperatorConstants.kDriverControllerPort);
-  public final static XboxController m_coDriverController =
-      new XboxController(OperatorConstants.kCoDriverControllerPort);
+  public final static CommandXboxController m_coDriverController =
+      new CommandXboxController(OperatorConstants.kCoDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -58,7 +63,7 @@ public class RobotContainer {
     m_driveSubsystem.setDefaultCommand(new DriveArcade());
     m_EncoderPID.setDefaultCommand(new SetArmSpeed());
   }
-
+  
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -73,10 +78,15 @@ public class RobotContainer {
     // new JoystickButton(m_driverController, 2).onTrue(new MoveArmMid());
     // new JoystickButton(m_driverController, 3).onTrue(new MoveArmLow());
     // new JoystickButton(m_driverController, 1).onTrue(new RestArm());
-    new JoystickButton(m_coDriverController, 1).onTrue(new Intake());
-    new JoystickButton(m_coDriverController, 3).onTrue(new Outake());
-    new JoystickButton(m_coDriverController, 2).onTrue(new StopIntake());
+    // new JoystickButton(m_coDriverController, 1).onTrue(new Intake());
+    // new JoystickButton(m_coDriverController, 3).onTrue(new Outake());
+    // new JoystickButton(m_coDriverController, 2).onTrue(new StopIntake());
 
+    m_coDriverController.a().onTrue(new Intake());
+    m_coDriverController.x().onTrue(new Outake());
+    m_coDriverController.b().onTrue(new StopIntake());
+    m_coDriverController.rightTrigger().onTrue(new SetColor(0.69));
+    m_coDriverController.leftTrigger().onTrue(new SetColor(0.91));
     // new Trigger(m_driverController.a(null)).onTrue(new Intake());
 
     // new Trigger (m_coDriverController ).onTrue(new StopIntake());
