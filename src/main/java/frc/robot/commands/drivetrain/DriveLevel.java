@@ -16,7 +16,7 @@ public class DriveLevel extends CommandBase {
 
   public DriveLevel() {
     // Use addRequirements() here to declare subsystem dependencies.
-    tiltController = new PIDController(0.011, 0, 0.0015);
+    tiltController = new PIDController(0.01, 0, 0.0015);
     tiltController.setSetpoint(45);
     tiltController.setTolerance(4 );
   }

@@ -8,32 +8,32 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.EncoderPID;
+
 
 public class MoveArmLow extends CommandBase {
   /** Creates a new MoveArmLow. */
   public MoveArmLow() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_EncoderPID);
+    // addRequirements(// RobotContainer.m_EncoderPID);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.m_EncoderPID.setSetpoint(ArmConstants.kLowArm);
+    // RobotContainer.m_EncoderPID.setSetpoint(ArmConstants.kLowArm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double output = RobotContainer.m_EncoderPID.getMeasurement();
-    RobotContainer.m_EncoderPID.useOutput(output, ArmConstants.kLowArm);
+    // double output = // RobotContainer.m_EncoderPID.getMeasurement();
+    // RobotContainer.m_EncoderPID.useOutput(output, ArmConstants.kLowArm);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.m_EncoderPID.moveArm(0);
+    // RobotContainer.m_EncoderPID.moveArm(0);
   }
 
   // Returns true when the command should end.

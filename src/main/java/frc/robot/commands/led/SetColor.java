@@ -4,14 +4,17 @@
 
 package frc.robot.commands.led;
 
+import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 
 public class SetColor extends CommandBase {
+
   private double pwm;
 
   /** Creates a new SetColor. */
   public SetColor(double pwmValue) {
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(RobotContainer.m_ledsubsystem);
     pwm = pwmValue;
   }

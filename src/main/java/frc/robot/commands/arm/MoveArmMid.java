@@ -12,26 +12,26 @@ public class MoveArmMid extends CommandBase {
   /** Creates a new MoveArmMid. */
   public MoveArmMid() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.m_EncoderPID);
+    // addRequirements(// RobotContainer.m_EncoderPID);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RobotContainer.m_EncoderPID.setSetpoint(ArmConstants.kMidArm);
+    // RobotContainer.m_EncoderPID.setSetpoint(ArmConstants.kMidArm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double output = RobotContainer.m_EncoderPID.getMeasurement();
-    RobotContainer.m_EncoderPID.useOutput(output, ArmConstants.kMidArm);
+    // double output = // RobotContainer.m_EncoderPID.getMeasurement();
+    // RobotContainer.m_EncoderPID.useOutput(output, ArmConstants.kMidArm);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.m_EncoderPID.moveArm(0);
+    // RobotContainer.m_EncoderPID.moveArm(0);
   }
 
   // Returns true when the command should end.

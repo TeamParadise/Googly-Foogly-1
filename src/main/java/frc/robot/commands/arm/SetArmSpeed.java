@@ -10,8 +10,8 @@ import frc.robot.RobotContainer;
 public class SetArmSpeed extends CommandBase {
   /** Creates a new SetArmSpeed. */
   public SetArmSpeed() {
-    
-    addRequirements(RobotContainer.m_EncoderPID);
+    addRequirements(RobotContainer.m_armSubsystem);
+    // addRequirements(// RobotContainer.m_EncoderPID);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,14 +23,11 @@ public class SetArmSpeed extends CommandBase {
   @Override
   public void execute() {
     if(RobotContainer.m_driverController.getRightTriggerAxis() > 0.1) {
-      RobotContainer.m_EncoderPID.setCoastMode();
-      RobotContainer.m_EncoderPID.moveArm(Math.sqrt(0.7 * RobotContainer.m_driverController.getRightTriggerAxis()));
+      RobotContainer.m_armSubsystem.moveArm(Math.sqrt(0.7 * RobotContainer.m_driverController.getRightTriggerAxis()));
     } else if (RobotContainer.m_driverController.getLeftTriggerAxis() > 0.1) {
-      RobotContainer.m_EncoderPID.setCoastMode();
-      RobotContainer.m_EncoderPID.moveArm(-Math.sqrt(0.7 * RobotContainer.m_driverController.getLeftTriggerAxis()));
+      RobotContainer.m_armSubsystem.moveArm(-Math.sqrt(0.7 * RobotContainer.m_driverController.getLeftTriggerAxis()));
     } else {
-      RobotContainer.m_EncoderPID.setBrakeMode();
-      RobotContainer.m_EncoderPID.moveArm(0);
+      RobotContainer.m_armSubsystem.moveArm(0);
     }
   }
 

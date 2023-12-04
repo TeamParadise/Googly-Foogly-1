@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
@@ -32,10 +34,16 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class DriveSubsystem extends SubsystemBase {
   
   //Initialize motors
-  CANSparkMax leftMotorMain = new CANSparkMax(MotorConstants.kLeftMotorMain, MotorType.kBrushless);
-  CANSparkMax leftMotorFollow = new CANSparkMax(MotorConstants.kLeftMotorFollow, MotorType.kBrushless);
-  CANSparkMax rightMotorMain = new CANSparkMax(MotorConstants.kRightMotorMain, MotorType.kBrushless);
-  CANSparkMax rightMotorFollow = new CANSparkMax(MotorConstants.kRightMotorFollow, MotorType.kBrushless);
+  // CANSparkMax leftMotorMain = new CANSparkMax(MotorConstants.kLeftMotorMain, MotorType.kBrushless);
+  // CANSparkMax leftMotorFollow = new CANSparkMax(MotorConstants.kLeftMotorFollow, MotorType.kBrushless);
+  // CANSparkMax rightMotorMain = new CANSparkMax(MotorConstants.kRightMotorMain, MotorType.kBrushless);
+  // CANSparkMax rightMotorFollow = new CANSparkMax(MotorConstants.kRightMotorFollow, MotorType.kBrushless);
+
+  TalonSRX leftMotorMain = new TalonSRX(MotorConstants.kLeftMotorMain);
+  TalonSRX leftMotorFollow = new TalonSRX(MotorConstants.kLeftMotorFollow);
+  TalonSRX rightMotorMain = new TalonSRX(MotorConstants.kRightMotorMain);
+  TalonSRX rightMotorFollow = new TalonSRX(MotorConstants.kRightMotorFollow);
+
     
   //Initialize Gyro 
   AHRS ahrs = new AHRS(SPI.Port.kMXP);
@@ -43,7 +51,8 @@ public class DriveSubsystem extends SubsystemBase {
   ShuffleboardTab pidtab = Shuffleboard.getTab("PID Tab");
 
   GenericEntry setpointWidget, errorWidget, positionWidget, leftDriveWidget, rightDriveWidget;
- ;
+
+  double speedMultiplier = 1;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -59,21 +68,27 @@ public class DriveSubsystem extends SubsystemBase {
     positionWidget = pidtab.add("Position", 0.0).getEntry();
     leftDriveWidget = pidtab.add("Left Output", 0.0).getEntry();
     rightDriveWidget = pidtab.add("Right Output", 0.0).getEntry();
-  }
+  } 
 
   private void configMotors() {
-    leftMotorFollow.follow(leftMotorMain, false);
-    rightMotorFollow.follow(rightMotorMain, false);
+    // leftMotorMain.setSmartCurrentLimit(65);
+    // leftMotorFollow.setSmartCurrentLimit(65);
+    // rightMotorMain.setSmartCurrentLimit(65);
+    // rightMotorFollow.setSmartCurrentLimit(65);
+    // leftMotorFollow.follow(leftMotorMain, false);
+    // rightMotorFollow.follow(rightMotorMain, false);
+    leftMotorFollow.follow(leftMotorMain);
+    rightMotorFollow.follow(rightMotorMain);
 
     leftMotorMain.setInverted(true);
     leftMotorFollow.setInverted(true);
     rightMotorMain.setInverted(false);
     rightMotorFollow.setInverted(false);
      
-    leftMotorMain.setClosedLoopRampRate(0.1);
-    leftMotorFollow.setClosedLoopRampRate(0.1);
-    rightMotorMain.setClosedLoopRampRate(0.1);
-    rightMotorFollow.setClosedLoopRampRate(0.1);
+    // leftMotorMain.setClosedLoopRampRate(0.1);
+    // leftMotorFollow.setClosedLoopRampRate(0.1);
+    // rightMotorMain.setClosedLoopRampRate(0.1);
+    // rightMotorFollow.setClosedLoopRampRate(0.1)  ;
 
     // NEED A SPARK MAX EQUIVALENT
     // leftMotorMain.configVoltageCompSaturation(12);
@@ -87,21 +102,21 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void DriveArcade(double moveSpeed, double rotateSpeed) {
-    double leftOutput = moveSpeed*(0.85) + rotateSpeed*(0.7);
-    double rightOutput = moveSpeed*(0.85) - rotateSpeed*(0.7);
-    leftMotorMain.set(MathUtil.applyDeadband(leftOutput, 0.06));
-    rightMotorMain.set(MathUtil.applyDeadband(rightOutput, 0.06));
+    double leftOutput = (moveSpeed*(speedMultiplier) + rotateSpeed) * Math.abs(speedMultiplier);
+    double rightOutput = (moveSpeed*(speedMultiplier) - rotateSpeed) *  Math.abs(speedMultiplier);
+    leftMotorMain.set(ControlMode.PercentOutput, (MathUtil.applyDeadband(leftOutput, 0.06)));
+    rightMotorMain.set(ControlMode.PercentOutput, (MathUtil.applyDeadband(rightOutput, 0.06)));
   }
 
   public void DriveTank(double left, double right) {
-    leftMotorMain.set(left);
-    rightMotorMain.set(right*.9);
+    leftMotorMain.set(ControlMode.PercentOutput, left);
+    rightMotorMain.set(ControlMode.PercentOutput, right);
   }
 
   public void DriveTankPID(double left, double right, PIDController pid, double position) {
-    leftMotorMain.set(left);
-    rightMotorMain.set(right*.9);
- 
+    leftMotorMain.set(ControlMode.PercentOutput, left);
+    rightMotorMain.set(ControlMode.PercentOutput, right);
+
     setpointWidget.setDouble(pid.getSetpoint());
     errorWidget.setDouble(pid.getPositionError());
     positionWidget.setDouble(position);
@@ -110,8 +125,8 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void stopDrive() {
-    leftMotorMain.set(0);
-    rightMotorMain.set(0);
+    leftMotorMain.set(ControlMode.PercentOutput, 0);
+    rightMotorMain.set(ControlMode.PercentOutput, 0);
   }
 
   // public CommandBase setCoastMode() {
@@ -130,12 +145,18 @@ public class DriveSubsystem extends SubsystemBase {
   //   });
   // }
 
+  public CommandBase halfSpeed(){
+    return runOnce(() -> {
+      if (Math.abs(speedMultiplier) < 1) speedMultiplier = Math.abs(speedMultiplier)/speedMultiplier;
+      else speedMultiplier *= 0.65;
+    });
+  }
 
   public void setBrakeMode() {
-      leftMotorMain.setIdleMode(IdleMode.kBrake);
-      rightMotorMain.setIdleMode(IdleMode.kBrake);
-      leftMotorFollow.setIdleMode(IdleMode.kBrake);
-      rightMotorFollow.setIdleMode(IdleMode.kBrake);
+    leftMotorMain.setNeutralMode(NeutralMode.Brake);
+    leftMotorFollow.setNeutralMode(NeutralMode.Brake);
+    rightMotorMain.setNeutralMode(NeutralMode.Brake);
+    rightMotorFollow.setNeutralMode(NeutralMode.Brake);
   }
   //Move the following 3 to specific Gyro File
   public double getGyroAngle() {

@@ -3,25 +3,18 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
+import frc.robot.Robot;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.arm.MoveArmHigh;
-import frc.robot.commands.arm.MoveArmLow;
-import frc.robot.commands.arm.MoveArmMid;
-import frc.robot.commands.arm.RestArm;
 import frc.robot.commands.arm.SetArmSpeed;
 import frc.robot.commands.auto.Balance;
-import frc.robot.commands.auto.ScoreHigh;
-import frc.robot.commands.auto.ScoreMid;
 import frc.robot.commands.auto.Taxi;
 import frc.robot.commands.drivetrain.DriveArcade;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outake;
 import frc.robot.commands.intake.StopIntake;
 import frc.robot.commands.led.SetColor;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.EncoderPID;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 
@@ -34,7 +27,6 @@ import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -46,13 +38,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final static DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-  public final static EncoderPID m_EncoderPID = new EncoderPID();
+  public final static ArmSubsystem m_armSubsystem = new ArmSubsystem();
   public final static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   public final static LEDSubsystem m_ledsubsystem = new LEDSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  public final static XboxController m_driverController =
-      new XboxController(OperatorConstants.kDriverControllerPort);
+  public final static CommandXboxController m_driverController =
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
   public final static CommandXboxController m_coDriverController =
       new CommandXboxController(OperatorConstants.kCoDriverControllerPort);
 
@@ -61,7 +53,9 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     m_driveSubsystem.setDefaultCommand(new DriveArcade());
-    m_EncoderPID.setDefaultCommand(new SetArmSpeed());
+    m_armSubsystem.setDefaultCommand(new SetArmSpeed());
+    // m_ledsubsystem.setDefaultCommand(new SetColor(-0.99));
+
   }
   
   /**
@@ -81,6 +75,8 @@ public class RobotContainer {
     // new JoystickButton(m_coDriverController, 1).onTrue(new Intake());
     // new JoystickButton(m_coDriverController, 3).onTrue(new Outake());
     // new JoystickButton(m_coDriverController, 2).onTrue(new StopIntake());
+
+    m_coDriverController.y().onTrue(m_driveSubsystem.halfSpeed());
 
     m_coDriverController.a().onTrue(new Intake());
     m_coDriverController.x().onTrue(new Outake());
@@ -102,20 +98,20 @@ public class RobotContainer {
   public Command getAutonomousCommand(String auto, boolean balance, boolean taxi) {
     // An example command will be run in autonomous
     
-    if (auto.equals("kHigh")) {
-      if (taxi) return new ScoreHigh().withTimeout(7).andThen(new Taxi());
-      else if (balance) return new ScoreHigh().withTimeout(6).andThen(new Balance());
-      return new ScoreHigh();
-    }
-    else if (auto.equals("kMid")) {
-      if (taxi) return new ScoreMid().withTimeout(7).andThen(new Taxi());
-      else if (balance) return new ScoreMid().withTimeout(5).andThen(new Balance());
-      return new ScoreMid();
-    }
-    else if (auto.equals("kNone")) {
-      if (taxi) return new Taxi();
-      if (balance) return new Balance();
-    }
+    // if (auto.equals("kHigh")) {
+    //   if (taxi) return new ScoreHigh().withTimeout(7).andThen(new Taxi());
+    //   else if (balance) return new ScoreHigh().withTimeout(6).andThen(new Balance());
+    //   return new ScoreHigh();
+    // }
+    // else if (auto.equals("kMid")) {
+    //   if (taxi) return new ScoreMid().withTimeout(7).andThen(new Taxi());
+    //   else if (balance) return new ScoreMid().withTimeout(5).andThen(new Balance());
+    //   return new ScoreMid();
+    // }
+    // else if (auto.equals("kNone")) {
+    //   if (taxi) return new Taxi();
+    //   if (balance) return new Balance();
+    // }
 
     return null;
   } 
