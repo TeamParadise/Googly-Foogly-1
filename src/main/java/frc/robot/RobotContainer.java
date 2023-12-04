@@ -12,12 +12,11 @@ import frc.robot.commands.drivetrain.DriveArcade;
 import frc.robot.commands.intake.Intake;
 import frc.robot.commands.intake.Outake;
 import frc.robot.commands.intake.StopIntake;
-import frc.robot.commands.led.SetColor;
+// import frc.robot.commands.led.SetColor;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDSubsystem;
-
+// import frc.robot.subsystems.LEDSubsystem;
 import java.nio.channels.SelectionKey;
 
 import javax.print.attribute.standard.RequestingUserName;
@@ -40,7 +39,7 @@ public class RobotContainer {
   public final static DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   public final static ArmSubsystem m_armSubsystem = new ArmSubsystem();
   public final static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-  public final static LEDSubsystem m_ledsubsystem = new LEDSubsystem();
+  // public final static LEDSubsystem m_ledsubsystem = new LEDSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public final static CommandXboxController m_driverController =
@@ -81,8 +80,8 @@ public class RobotContainer {
     m_coDriverController.a().onTrue(new Intake());
     m_coDriverController.x().onTrue(new Outake());
     m_coDriverController.b().onTrue(new StopIntake());
-    m_coDriverController.rightTrigger().onTrue(new SetColor(0.69));
-    m_coDriverController.leftTrigger().onTrue(new SetColor(0.91));
+    // m_coDriverController.rightTrigger().onTrue(new SetColor(0.69));
+    // m_coDriverController.leftTrigger().onTrue(new SetColor(0.91));
     // new Trigger(m_driverController.a(null)).onTrue(new Intake());
 
     // new Trigger (m_coDriverController ).onTrue(new StopIntake());

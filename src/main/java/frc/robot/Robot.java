@@ -28,7 +28,9 @@ public class Robot extends TimedRobot {
   private final SendableChooser<Boolean> m_balance = new SendableChooser<>();
   private final SendableChooser<Boolean> m_taxi = new SendableChooser<>();
   private final SendableChooser<String> m_cargo = new SendableChooser<>();
-  public static LEDSubsystem m_led = new LEDSubsystem();
+  // public static LEDSubsystem m_led = new LEDSubsystem();
+  AddressableLED ledStrip = new AddressableLED(0);
+  AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(160);
 
 
   /**
@@ -63,6 +65,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Game Piece", m_cargo);
     SmartDashboard.putData("Taxi", m_taxi);
     SmartDashboard.putData("Balance", m_balance);
+    ledStrip.setLength(ledBuffer.getLength());
+    ledStrip.setData(ledBuffer);
+    ledStrip.start();
   }
 
 
@@ -127,6 +132,17 @@ public class Robot extends TimedRobot {
     
     // RobotContainer.m_EncoderPID.setBrakeMode();
     RobotContainer.m_IntakeSubsystem.setBrakeMode();
+
+    // Green, Red, Green, Red, ETC
+    
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      if (i % 2 == 0) {
+        ledBuffer.setRGB(i, 255, 0, 0);
+      } else {
+        ledBuffer.setRGB(i, 0, 255, 0);
+      }
+    }
+    ledStrip.setData(ledBuffer);
   }
 
   /** This function is called periodically during operator control. */
