@@ -6,16 +6,23 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public class LEDSubsystem extends SubsystemBase {
+  AddressableLED ledStrip = new AddressableLED(3);
+  AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(60);
 
-  private static Spark m_blinkin = new Spark(0);
-  /** Creates a new LEDSubsystem. */
+
+
+  /** Creates a new LedSubsystem. */
   public LEDSubsystem() {
+    ledStrip.setLength(ledBuffer.getLength());
+    ledStrip.setData(ledBuffer);
+    ledStrip.start();
   }
 
   public void setColor(double pwmValue) {
-    m_blinkin.set(pwmValue);
   }
 
   @Override

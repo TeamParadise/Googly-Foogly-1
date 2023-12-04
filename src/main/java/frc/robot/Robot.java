@@ -4,13 +4,14 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.LEDSubsystem;
 
 
 /**
@@ -27,6 +28,10 @@ public class Robot extends TimedRobot {
   private final SendableChooser<Boolean> m_balance = new SendableChooser<>();
   private final SendableChooser<Boolean> m_taxi = new SendableChooser<>();
   private final SendableChooser<String> m_cargo = new SendableChooser<>();
+  // public static LEDSubsystem m_led = new LEDSubsystem();
+  AddressableLED ledStrip = new AddressableLED(0);
+  AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(160);
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -43,8 +48,8 @@ public class Robot extends TimedRobot {
 
     // CameraServer.startAutomaticCapture("USB Camera 0", 0);
 
-    m_chooser.setDefaultOption("High", "kHigh");
-    m_chooser.addOption("Mid", "kMid");
+    m_chooser.setDefaultOption("Mid", "kMid");
+    m_chooser.addOption("High", "kHigh");
     m_chooser.addOption("None", "kNone");
 
     m_taxi.addOption("Yes", true);
@@ -53,13 +58,16 @@ public class Robot extends TimedRobot {
     m_balance.addOption("Yes", true);
     m_balance.setDefaultOption("No", false);
 
-    m_cargo.setDefaultOption("Cube", "kCube");
-    m_cargo.addOption("Cone", "kCone");
+    m_cargo.setDefaultOption("Cone", "kCone");
+    m_cargo.addOption("Cube", "kCube");
   
     SmartDashboard.putData("Scoring Level", m_chooser);
     SmartDashboard.putData("Game Piece", m_cargo);
     SmartDashboard.putData("Taxi", m_taxi);
     SmartDashboard.putData("Balance", m_balance);
+    ledStrip.setLength(ledBuffer.getLength());
+    ledStrip.setData(ledBuffer);
+    ledStrip.start();
   }
 
 
@@ -82,15 +90,15 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    RobotContainer.m_EncoderPID.setCoastMode();
+    // RobotContainer.m_EncoderPID.setCoastMode();
   }
 
   @Override
   public void disabledPeriodic() {
-    RobotContainer.m_EncoderPID.setCoastMode();
+    // RobotContainer.m_EncoderPID.setCoastMode();
     RobotContainer.m_IntakeSubsystem.setBrakeMode();
 
-    // System.out.println(RobotContainer.m_EncoderPID.getEncoder());
+    // System.out.println(// RobotContainer.m_EncoderPID.getEncoder());
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -101,7 +109,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
      m_autonomousCommand.schedule();
     }
-    RobotContainer.m_EncoderPID.setBrakeMode();
+    // RobotContainer.m_EncoderPID.setBrakeMode();
     RobotContainer.m_driveSubsystem.setBrakeMode();
     RobotContainer.m_driveSubsystem.resetGyro();
   }
@@ -122,14 +130,25 @@ public class Robot extends TimedRobot {
      m_autonomousCommand.cancel();
     }
     
-    RobotContainer.m_EncoderPID.setBrakeMode();
+    // RobotContainer.m_EncoderPID.setBrakeMode();
     RobotContainer.m_IntakeSubsystem.setBrakeMode();
+
+    // Green, Red, Green, Red, ETC
+    
+    for (int i = 0; i < ledBuffer.getLength(); i++) {
+      if (i % 2 == 0) {
+        ledBuffer.setRGB(i, 255, 0, 0);
+      } else {
+        ledBuffer.setRGB(i, 0, 255, 0);
+      }
+    }
+    ledStrip.setData(ledBuffer);
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // System.out.println("Motor Output: " + RobotContainer.m_EncoderPID.getMeasurement());
+    // System.out.println("Motor Output: " + // RobotContainer.m_EncoderPID.getMeasurement());
   }
 
   @Override
@@ -150,3 +169,5 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {}
 }
+
+

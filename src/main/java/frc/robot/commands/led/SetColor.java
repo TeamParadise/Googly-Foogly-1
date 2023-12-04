@@ -1,38 +1,41 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// // Copyright (c) FIRST and other WPILib contributors.
+// // Open Source Software; you can modify and/or share it under the terms of
+// // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.led;
+// package frc.robot.commands.led;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+// import frc.robot.Robot;
+// import edu.wpi.first.wpilibj2.command.CommandBase;
+// import frc.robot.RobotContainer;
 
-public class SetColor extends CommandBase {
-  private double pwm;
+// public class SetColor extends CommandBase {
 
-  /** Creates a new SetColor. */
-  public SetColor(double pwmValue) {
-    addRequirements(RobotContainer.m_ledsubsystem);
-    pwm = pwmValue;
-  }
+//   private double pwm;
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+//   /** Creates a new SetColor. */
+//   public SetColor(double pwmValue) {
+//     // Use addRequirements() here to declare subsystem dependencies.
+//     addRequirements(RobotContainer.m_ledsubsystem);
+//     pwm = pwmValue;
+//   }
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    RobotContainer.m_ledsubsystem.setColor(pwm);
-  }
+//   // Called when the command is initially scheduled.
+//   @Override
+//   public void initialize() {}
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+//   // Called every time the scheduler runs while the command is scheduled.
+//   @Override
+//   public void execute() {
+//     RobotContainer.m_ledsubsystem.setColor(pwm);
+//   }
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
-}
+//   // Called once the command ends or is interrupted.
+//   @Override
+//   public void end(boolean interrupted) {}
+
+//   // Returns true when the command should end.
+//   @Override
+//   public boolean isFinished() {
+//     return false;
+//   }
+// }
